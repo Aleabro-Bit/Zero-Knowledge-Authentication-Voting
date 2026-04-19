@@ -10,7 +10,7 @@ enum State {
     Cancelled 
 }
 
-contract AgeGate is Verifier {
+contract VerifiedVoting is Verifier {
 
     struct Candidate {
         uint8 id; // id is used to access the candidate using the map
