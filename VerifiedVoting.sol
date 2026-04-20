@@ -52,6 +52,8 @@ contract VerifiedVoting is Verifier {
     //Errors related to proof
     error InvalidProof(Proof proof);
     error StolenProof(Proof proof, address stealer);
+    error ProofExpired(uint256 presentTime, uint256 creationTime); 
+    error TimestampInTheFuture(uint256 presentTime, uint256 timestamp);
 
     modifier onlyAdmin() { 
         require(msg.sender == admin, Unauthorized(msg.sender));
@@ -101,9 +103,9 @@ contract VerifiedVoting is Verifier {
         uint256 expected_attestation_hash
     ) external {
 
-        require(current_timestamp <= block.timestamp, "Timestamp in the future");
+        require(current_timestamp <= block.timestamp, TimestampInTheFuture(block.timestamp, current_timestamp));
         // For safety: after 30 minutes the proof expires and the user needs to compute a new one
-        require(block.timestamp - current_timestamp < 30 minutes, "Proof expired");
+        require(block.timestamp - current_timestamp < 30 minutes, ProofExpired(block.timestamp, current_timestamp));
 
         // Building the public input of the circuit
         uint[5] memory input = [
